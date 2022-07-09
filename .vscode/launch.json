@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'LeeCSV'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=LeeCSV",
+                    "--package=LeeCSV"
+                ],
+                "filter": {
+                    "name": "LeeCSV",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'LeeCSV'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=LeeCSV",
+                    "--package=LeeCSV"
+                ],
+                "filter": {
+                    "name": "LeeCSV",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
