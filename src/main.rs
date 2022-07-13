@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
-
+#![allow(non_snake_case)]
 
 use std::error::Error;
 use std::io;
@@ -12,7 +12,6 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 struct RecordIn {
     //compromiso;saldo_tota;saldo_venc;informacio
-
     legajo : String,
     sector :Option<u64>,
     cuilIn : String,
@@ -48,7 +47,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
 
     #[derive(serde::Serialize)]
     struct RecOut {
-        cuilOut: &'static str,
+        cuilOut: String,
     }
 
     
@@ -57,10 +56,10 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         //println!("{:?}", record);
         println!("{:?}",record.cuilIn);
         let cuil = RecOut {
-            cuilOut: &record.cuilIn,
+            cuilOut: record.cuilIn,
         };
     
-        wtr.serialize(cuil);
+        let ret = wtr.serialize(cuil);
         //wtr.write_record(&["a", "b", "c"])?;
         wtr.flush()?;
     }
