@@ -52,6 +52,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         cuilOut: String,
         docTipoOut: String,
         docNroOut : String,
+        filler16 :  String,
         diasAtrasOut : String,
         tipoOut: String,
         estadoOut : String,
@@ -59,18 +60,33 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         compromisoOut :String,
         saldoTotalOut :String,
         saldoVencOut :String,
+        filler02 : String,
         informacionOut : String,
+        filler208 : String,
     }
 
     
     for result in rdr.deserialize() {
         let record: RecordIn = result?;
         
+        let filler02:String;
+        let filler02 = " ";
+        let espacios02 = filler02.pad_to_width(2);
+
+        let filler16:String;
+        let filler16 = " ";
+        let espacios16 = filler16.pad_to_width_with_char(16, '-');
+
+        let filler208:String;
+        let filler208 = " ";
+        let espacios208 = filler16.pad_to_width(208);
+
+
         //println!("{:?}",record.cuilIn);
         let newRec = RecOut {
             cuilOut: record.cuilIn.trim().to_string().pad_to_width(11),
             docTipoOut: record.doc_tipo.trim().to_string().pad_to_width(3),
-            docNroOut: record.doc_nro.trim().to_string().pad_to_width(20),
+            docNroOut: record.doc_nro.trim().to_string().pad(20, '0', Alignment::Right, true),
             diasAtrasOut : record. dias_atras.trim().to_string().pad_to_width_with_char(3, '0'),
             tipoOut: record.tipo.trim().to_string().pad_to_width(2),
             estadoOut : record.estado.trim().to_string().pad_to_width(1),
@@ -79,11 +95,15 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
             saldoTotalOut : record.saldo_tota.to_string().pad(9, '0', Alignment::Right, true),
             saldoVencOut : record.saldo_venc.to_string().pad(9, '0', Alignment::Right, true),
             informacionOut: record.informacio.trim().to_string().pad_to_width_with_char(6, '0'),
+            filler02: espacios02,
+            filler16: espacios16,
+            filler208: espacios208,
         };
    
-        //println!("{:?}",newRec.docTipoOut.trim());
-        println!("{:?}",newRec.compromisoOut);
 
+        //println!("{:?}",newRec.docNroOut);
+        //println!("{:?}",espacios208);
+        
         let ret = wtr.serialize(newRec);
 
         wtr.flush()?;
@@ -94,12 +114,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
 
 fn main() {
     if let Err(err) = procesa_csv() {
-        use fill::Fill;
-        let mut memory = None;
-
-        memory.fill(42..);
-        assert_eq!(memory, Some(42));
-        println!("error running example: {}", err);
+        println!("Error en la Ejecucion del Programa para INAES: {}", err);
         process::exit(1);
     }
 }
