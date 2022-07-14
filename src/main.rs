@@ -9,10 +9,11 @@ use std::process;
 use csv::ReaderBuilder;
 use csv::WriterBuilder;
 use serde::Deserialize;
+use pad::{PadStr, Alignment};
+
 
 #[derive(Debug, Deserialize)]
 struct RecordIn {
-    //compromiso;saldo_tota;saldo_venc;informacio
     legajo : String,
     sector :Option<u64>,
     cuilIn : String,
@@ -55,9 +56,9 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         tipoOut: String,
         estadoOut : String,
         estadoInaOut : String,
-        compromisoOut :u32,
-        saldoTotalOut :u32,
-        saldoVencOut :u32,
+        compromisoOut :String,
+        saldoTotalOut :String,
+        saldoVencOut :String,
         informacionOut : String,
     }
 
@@ -67,26 +68,24 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         
         //println!("{:?}",record.cuilIn);
         let newRec = RecOut {
-            cuilOut: record.cuilIn.trim().to_string(),
-            docTipoOut: record.doc_tipo.trim().to_string(),
-            docNroOut: record.doc_nro.trim().to_string(),
-            diasAtrasOut : record. dias_atras.trim().to_string(),
-            tipoOut: record.tipo.trim().to_string(),
-            estadoOut : record.estado.trim().to_string(),
-            estadoInaOut : record.estado_ina.trim().to_string(),
-            compromisoOut : record.compromiso,
-            saldoTotalOut : record.saldo_tota,
-            saldoVencOut : record.saldo_venc,
-            informacionOut: record.informacio,
+            cuilOut: record.cuilIn.trim().to_string().pad_to_width(11),
+            docTipoOut: record.doc_tipo.trim().to_string().pad_to_width(3),
+            docNroOut: record.doc_nro.trim().to_string().pad_to_width(20),
+            diasAtrasOut : record. dias_atras.trim().to_string().pad_to_width_with_char(3, '0'),
+            tipoOut: record.tipo.trim().to_string().pad_to_width(2),
+            estadoOut : record.estado.trim().to_string().pad_to_width(1),
+            estadoInaOut : record.estado_ina.trim().to_string().pad_to_width(1),
+            compromisoOut : record.compromiso.to_string().pad(9, '0', Alignment::Right, true),
+            saldoTotalOut : record.saldo_tota.to_string().pad(9, '0', Alignment::Right, true),
+            saldoVencOut : record.saldo_venc.to_string().pad(9, '0', Alignment::Right, true),
+            informacionOut: record.informacio.trim().to_string().pad_to_width_with_char(6, '0'),
         };
    
         //println!("{:?}",newRec.docTipoOut.trim());
-        //println!("{:?}",newRec.cuilOut.pad_to_width(11));
-        
+        println!("{:?}",newRec.compromisoOut);
 
         let ret = wtr.serialize(newRec);
 
-        //wtr.write_record(&["a", "b", "c"])?;
         wtr.flush()?;
     }
     
@@ -95,6 +94,11 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
 
 fn main() {
     if let Err(err) = procesa_csv() {
+        use fill::Fill;
+        let mut memory = None;
+
+        memory.fill(42..);
+        assert_eq!(memory, Some(42));
         println!("error running example: {}", err);
         process::exit(1);
     }
