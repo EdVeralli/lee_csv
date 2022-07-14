@@ -67,21 +67,21 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         
         //println!("{:?}",record.cuilIn);
         let newRec = RecOut {
-            cuilOut: record.cuilIn.trim().to_owned(),
-            docTipoOut: record.doc_tipo.trim(),
-            docNroOut: record.doc_nro,
-            diasAtrasOut : record. dias_atras,
-            tipoOut: record.tipo,
-            estadoOut : record.estado,
-            estadoInaOut : record.estado_ina,
+            cuilOut: record.cuilIn.trim().to_string(),
+            docTipoOut: record.doc_tipo.trim().to_string(),
+            docNroOut: record.doc_nro.trim().to_string(),
+            diasAtrasOut : record. dias_atras.trim().to_string(),
+            tipoOut: record.tipo.trim().to_string(),
+            estadoOut : record.estado.trim().to_string(),
+            estadoInaOut : record.estado_ina.trim().to_string(),
             compromisoOut : record.compromiso,
             saldoTotalOut : record.saldo_tota,
             saldoVencOut : record.saldo_venc,
             informacionOut: record.informacio,
         };
    
-        println!("{:?}",newRec.docTipoOut.trim());
-        println!("{:?}",newRec.cuilOut.pad_to_width(11));
+        //println!("{:?}",newRec.docTipoOut.trim());
+        //println!("{:?}",newRec.cuilOut.pad_to_width(11));
         
 
         let ret = wtr.serialize(newRec);
