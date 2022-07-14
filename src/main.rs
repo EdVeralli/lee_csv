@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
 #![allow(non_snake_case)]
+#![allow(unused_variables)]
 
 use std::error::Error;
 use std::io;
@@ -48,22 +49,47 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
     #[derive(serde::Serialize)]
     struct RecOut {
         cuilOut: String,
+        docTipoOut: String,
+        docNroOut : String,
+        diasAtrasOut : String,
+        tipoOut: String,
+        estadoOut : String,
+        estadoInaOut : String,
+        compromisoOut :u32,
+        saldoTotalOut :u32,
+        saldoVencOut :u32,
+        informacionOut : String,
     }
 
     
     for result in rdr.deserialize() {
         let record: RecordIn = result?;
-        //println!("{:?}", record);
-        println!("{:?}",record.cuilIn);
-        let cuil = RecOut {
-            cuilOut: record.cuilIn,
+        
+        //println!("{:?}",record.cuilIn);
+        let newRec = RecOut {
+            cuilOut: record.cuilIn.trim().to_owned(),
+            docTipoOut: record.doc_tipo.trim(),
+            docNroOut: record.doc_nro,
+            diasAtrasOut : record. dias_atras,
+            tipoOut: record.tipo,
+            estadoOut : record.estado,
+            estadoInaOut : record.estado_ina,
+            compromisoOut : record.compromiso,
+            saldoTotalOut : record.saldo_tota,
+            saldoVencOut : record.saldo_venc,
+            informacionOut: record.informacio,
         };
-    
-        let ret = wtr.serialize(cuil);
+   
+        println!("{:?}",newRec.docTipoOut.trim());
+        println!("{:?}",newRec.cuilOut.pad_to_width(11));
+        
+
+        let ret = wtr.serialize(newRec);
+
         //wtr.write_record(&["a", "b", "c"])?;
         wtr.flush()?;
     }
-    //wtr.flush()?;
+    
     Ok(())
 }
 
