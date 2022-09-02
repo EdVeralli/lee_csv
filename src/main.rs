@@ -2,6 +2,11 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
+#![allow(unused)]
+
+use std::fs::{self, File};
+use std::io::prelude::*;
+use std::io::LineWriter;
 
 use std::error::Error;
 use std::io;
@@ -52,14 +57,15 @@ struct HeaderOut {
 fn procesa_csv() -> Result<(), Box<dyn Error>> {
 
 
-    let mut file = OpenOptions::new()
+    let mut file_csv1 = OpenOptions::new()
     .write(true)
     .append(true)
     .open("test.csv")
     .unwrap();
-    let mut wtr2 = csv::Writer::from_writer(file);
+    let mut wtr2 = csv::Writer::from_writer(file_csv1);
     
-
+    let file_ascii = File::create("salidass.txt")?;
+    let mut file_ascii2 = LineWriter::new(file_ascii);
 
     let blanco01: String;
     let blanco02: String;
@@ -71,6 +77,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
     let blanco02 = " ";
     let blancos02 = blanco02.pad_to_width(250);
 
+    /*
     let newRecHeader = HeaderOut {
         HDR_CUIT: "30606513433".to_string(),
         HDR_TIPO_REG: "HH".to_string(),
@@ -84,8 +91,28 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         HDR_HORA_GRABACION: " HHMMSS".to_string(),
         BLANCOS2: blancos02,
     };
-        
+    */
 
+    let HDR_CUIT = String::from("30606513433");
+	let HDR_TIPO_REG = String::from("HH");
+	let HDR_MATRICULA = String::from("      735");
+	let HDR_PROVINCIA = String::from("C");
+	let HDR_GRADO = String::from("MM");
+	let HDR_RETORNO = String::from("  ");
+	let BLANCOS1 = blancos01;
+	let HDR_ARCHIVO = String::from("M");
+	let HDR_FECHA_GRABACION = String::from("AAAAMMDD");
+	let HDR_HORA_GRABACION = String::from(" HHMMSS");
+	let BLANCOS2 = blancos02;
+ 
+    let data_cuit  = String::from("30606513433");
+    let data_cuit2 = String::from("000000030606513433");
+    let data_cuit3 = String::from("11111111000000030606513433");
+    let fin_linea  = String::from("\r\n");
+    
+    let todas = HDR_CUIT  + &HDR_TIPO_REG + &HDR_MATRICULA +&HDR_PROVINCIA + &HDR_GRADO + &HDR_RETORNO +&BLANCOS1 + &HDR_ARCHIVO + &HDR_FECHA_GRABACION +&HDR_HORA_GRABACION +&BLANCOS2 + &fin_linea;
+    
+    file_ascii2.write_all(todas.as_bytes(),);
 
     let mut rdr = csv::ReaderBuilder::new()
              .has_headers(true)
@@ -116,8 +143,8 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         //.delimiter(b':');
 
 
-    let retHeader = wtr02.serialize(newRecHeader);
-    wtr02.flush()?;
+    //let retHeader = wtr02.serialize(newRecHeader);
+    //wtr02.flush()?;
 
     #[derive(serde::Serialize)]
     struct RecOut {
@@ -179,6 +206,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         let ret = wtr.serialize(newRec);
 
         wtr.flush()?;
+        file_ascii2 .flush();
     }
     
     Ok(())
