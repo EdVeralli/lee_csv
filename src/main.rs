@@ -7,6 +7,9 @@
 // $env:RUST_BACKTRACE=1
 // $env:RUST_BACKTRACE=1; cargo run
 
+
+// LINEA 13 DEL CSV DEL INPUT ME QUEDA DESFAZADA.... ALGUN CAMPO ES MAS LARGO DE LO QUE DEBE SER...
+
 use std::fs::{self, File};
 use std::io::prelude::*;
 use std::io::LineWriter;
@@ -110,19 +113,6 @@ fn procesa_csv() -> Result<(),io::Error> {
              .comment(Some(b'#'))
              .from_path("Cuotas.csv")?;
 
-/*     let mut wtr = csv::WriterBuilder::new()
-              .has_headers(false)
-              //.flexible(false)
-              //.quote_style(QuoteStyle::Never)
-              .from_path("Salida_Cuotas.csv")
-              .unwrap();
-              //.delimiter(b':');
-              //.flexible(false);
-              */
-
-    //let retHeader = wtr02.serialize(newRecHeader);
-    //wtr02.flush()?;
-
     #[derive(serde::Serialize)]
     struct RecOut {
         cuilOut: String,
@@ -151,11 +141,11 @@ fn procesa_csv() -> Result<(),io::Error> {
 
         let filler16:String;
         let filler16 = "                ";
-        let espacios16 = filler16; //.pad_to_width_with_char(16, ' ');
+        let espacios16 = filler16; //.pad_to_width_with_char(16, ' '); // No me funciono....:(
 
         let filler208:String;
         let filler208 = "                                                                                                                                                                                                               ";
-        let espacios208 = filler208; //.pad_to_width_with_char(208, ' ');
+        let espacios208 = filler208; //.pad_to_width_with_char(208, ' ');  // No me funciono....:(
 
 
         //println!("{:?}",record.cuilIn);
@@ -176,12 +166,12 @@ fn procesa_csv() -> Result<(),io::Error> {
             filler208: espacios208.to_string(),
         };
    
-        let mut dias = newRec.diasAtrasOut.parse::<i32>().unwrap();
+        let mut dias = newRec.diasAtrasOut.parse::<i32>().unwrap();  /// Sacar UnWrap !!!
         let mut diaz = 0;
         if dias > 999 {
-            let diaz = 999;
+            diaz = 999;
         }else {
-            let diaz = dias;
+            diaz = dias;
         };
         let mut dias_print = diaz.to_string();
 
