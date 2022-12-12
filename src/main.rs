@@ -4,6 +4,9 @@
 #![allow(unused_variables)]
 #![allow(unused)]
 
+// $env:RUST_BACKTRACE=1
+// $env:RUST_BACKTRACE=1; cargo run
+
 use std::fs::{self, File};
 use std::io::prelude::*;
 use std::io::LineWriter;
@@ -54,17 +57,17 @@ struct HeaderOut {
 }
 
 
-fn procesa_csv() -> Result<(), Box<dyn Error>> {
-
+fn procesa_csv() -> Result<(),io::Error> {
 
     let mut file_csv1 = OpenOptions::new()
     .write(true)
     .append(true)
-    .open("test.csv")
-    .unwrap();
-    let mut wtr2 = csv::Writer::from_writer(file_csv1);
+    .open("C:\\Users\\20171078343\\lee_csv\\Cuotas.csv")
+    .expect("Error abriendo el archivo CSV");
+
+    //let mut wtr2 = csv::Writer::from_writer(file_csv1);
     
-    let file_ascii = File::create("salidass.txt")?;
+    let file_ascii = File::create("salidas.txt")?;
     let mut file_ascii2 = LineWriter::new(file_ascii);
 
     let blanco01: String;
@@ -76,22 +79,6 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
     let blancos01 = blanco01.pad_to_width(8);
     let blanco02 = " ";
     let blancos02 = blanco02.pad_to_width(250);
-
-    /*
-    let newRecHeader = HeaderOut {
-        HDR_CUIT: "30606513433".to_string(),
-        HDR_TIPO_REG: "HH".to_string(),
-        HDR_MATRICULA: "      735".to_string(),
-        HDR_PROVINCIA: "C".to_string(),
-        HDR_GRADO: "MM".to_string(),
-        HDR_RETORNO: "  ".to_string(),
-        BLANCOS1: blancos01,
-        HDR_ARCHIVO: "M".to_string(),
-        HDR_FECHA_GRABACION: "AAAAMMDD".to_string(),
-        HDR_HORA_GRABACION: " HHMMSS".to_string(),
-        BLANCOS2: blancos02,
-    };
-    */
 
     let HDR_CUIT = String::from("30606513433");
 	let HDR_TIPO_REG = String::from("HH");
@@ -123,7 +110,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
              .comment(Some(b'#'))
              .from_path("Cuotas.csv")?;
 
-    let mut wtr = csv::WriterBuilder::new()
+/*     let mut wtr = csv::WriterBuilder::new()
               .has_headers(false)
               //.flexible(false)
               //.quote_style(QuoteStyle::Never)
@@ -131,17 +118,7 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
               .unwrap();
               //.delimiter(b':');
               //.flexible(false);
-             
-
-    let mut wtr02 = csv::WriterBuilder::new()
-        .has_headers(false)
-        .quote_style(QuoteStyle::Never)
-        .from_path("Salida_Cuotas.csv")
-        .unwrap();
-
-        //.flexible(false);
-        //.delimiter(b':');
-
+              */
 
     //let retHeader = wtr02.serialize(newRecHeader);
     //wtr02.flush()?;
@@ -169,16 +146,16 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
         let record: RecordIn = result?;
         
         let filler02:String;
-        let filler02 = " ";
+        let filler02 = "  ";
         let espacios02 = filler02.pad_to_width(2);
 
         let filler16:String;
-        let filler16 = " ";
-        let espacios16 = filler16.pad_to_width_with_char(16, ' ');
+        let filler16 = "                ";
+        let espacios16 = filler16; //.pad_to_width_with_char(16, ' ');
 
         let filler208:String;
-        let filler208 = " ";
-        let espacios208 = filler16.pad_to_width(208);
+        let filler208 = "                                                                                                                                                                                                               ";
+        let espacios208 = filler208; //.pad_to_width_with_char(208, ' ');
 
 
         //println!("{:?}",record.cuilIn);
@@ -186,26 +163,39 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
             cuilOut: record.cuil.trim().to_string().pad_to_width(11),
             docTipoOut: record.doc_tipo.trim().to_string().pad_to_width(3),
             docNroOut: record.doc_nro.trim().to_string().pad(20, '0', Alignment::Right, true),
-            diasAtrasOut : record. dias_atras.trim().to_string().pad_to_width_with_char(3, '0'),
-            tipoOut: record.tipo.trim().to_string().pad_to_width(2),
+            diasAtrasOut : record.dias_atras.trim().to_string().pad_to_width_with_char(3, '0'),
+            tipoOut: record.tipo.trim().to_string().pad_to_width_with_char(2, 'Y'),
             estadoOut : record.estado.trim().to_string().pad_to_width(1),
             estadoInaOut : record.estado_ina.trim().to_string().pad_to_width(1),
             compromisoOut : record.compromiso.to_string().pad(9, '0', Alignment::Right, true),
             saldoTotalOut : record.saldo_tota.to_string().pad(9, '0', Alignment::Right, true),
             saldoVencOut : record.saldo_venc.to_string().pad(9, '0', Alignment::Right, true),
             informacionOut: record.informacio.trim().to_string().pad_to_width_with_char(6, '0'),
-            filler02: espacios02,
-            filler16: espacios16,
-            filler208: espacios208,
+            filler02: espacios02.to_string(),
+            filler16: espacios16.to_string(),
+            filler208: espacios208.to_string(),
         };
    
+        let mut dias = newRec.diasAtrasOut.parse::<i32>().unwrap();
+        let mut diaz = 0;
+        if dias > 999 {
+            let diaz = 999;
+        }else {
+            let diaz = dias;
+        };
+        let mut dias_print = diaz.to_string();
 
-        //println!("{:?}",newRec.docNroOut);
-        //println!("{:?}",espacios208);
-        
-        let ret = wtr.serialize(newRec);
+        //let mut dias_print = diaz.to_string();
+        //println!("el numerico transformado {}",dias_print);
+        let lineas = newRec.cuilOut + &newRec.docTipoOut + &newRec.docNroOut + &dias_print + &newRec.tipoOut + &newRec.estadoOut + &newRec.estadoInaOut +&newRec.compromisoOut + &newRec.saldoTotalOut + &newRec.saldoVencOut + &newRec.informacionOut + &newRec.filler02 + &newRec.filler16 + &newRec.filler208 + &fin_linea;
+   
+        file_ascii2.write_all(lineas.as_bytes(),);
+    
+        //file_ascii2.write_all(todas.as_bytes(),);
 
-        wtr.flush()?;
+        //let ret = wtr.serialize(newRec);
+        //wtr.flush()?;
+
         file_ascii2 .flush();
     }
     
@@ -213,8 +203,8 @@ fn procesa_csv() -> Result<(), Box<dyn Error>> {
 }
 
 fn main() {
-    if let Err(err) = procesa_csv() {
-        println!("Error en la Ejecucion del Programa para INAES: {}", err);
-        process::exit(1);
-    }
+    let resultado = match procesa_csv() {
+        Ok(resultado) => {println!("Ejecucion Correcta del Programa para INAES")}
+        Err(e) => {println!("Error en la Ejecucion del Programa para INAES{}",e);}
+    };
 }
