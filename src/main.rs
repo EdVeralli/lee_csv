@@ -13,6 +13,7 @@
 use std::fs::{self, File};
 use std::io::prelude::*;
 use std::io::LineWriter;
+use std::io::stdin;
 
 use std::error::Error;
 use std::io;
@@ -59,15 +60,30 @@ struct HeaderOut {
     BLANCOS2: String,
 }
 
+fn open_file() -> io::Result<File> {
+    OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("C:\\Users\\20171078343\\lee_csv\\Cuotas.csv")
+}
+
+fn try_open_file() -> File {
+    let mut file_csv1;
+    loop {
+        file_csv1 = open_file();
+        match file_csv1 {
+            Ok(f) => return f,
+            Err(_) => {
+                println!("Error abriendo el archivo, cierre el Excel y presione la tecla Enter");
+                let _ = stdin().read(&mut [0u8]);
+            }
+        }
+    }
+}
+
 
 fn procesa_csv() -> Result<(),io::Error> {
-
-    let mut file_csv1 = OpenOptions::new()
-    .write(true)
-    .append(true)
-    .open("C:\\Users\\20171078343\\lee_csv\\Cuotas.csv")
-    .expect("Error abriendo el archivo CSV");
-
+    let mut file_csv1 = try_open_file();
     //let mut wtr2 = csv::Writer::from_writer(file_csv1);
     
     let file_ascii = File::create("salidas.txt")?;
@@ -193,7 +209,7 @@ fn procesa_csv() -> Result<(),io::Error> {
 }
 
 fn main() {
-    let resultado = match procesa_csv() {
+    match procesa_csv() {
         Ok(resultado) => {println!("Ejecucion Correcta del Programa para INAES")}
         Err(e) => {println!("Error en la Ejecucion del Programa para INAES{}",e);}
     };
